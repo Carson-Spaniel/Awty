@@ -59,7 +59,7 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'awty_app', 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'react', 'public')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -124,6 +124,7 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'react', 'dist'),  # Adjust path based on your directory structure
+    os.path.join(BASE_DIR, 'react', 'public'),
 ]
 
 # Default primary key field type
