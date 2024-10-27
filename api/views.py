@@ -1,5 +1,6 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from .models import Trip, Stop, Route
 from .serializers import TripSerializer, StopSerializer, RouteSerializer
@@ -8,6 +9,10 @@ from .utils import calculate_route  # Assume this calls OSRM to get the route da
 class TripViewSet(viewsets.ModelViewSet):
     queryset = Trip.objects.all()
     serializer_class = TripSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
     @action(detail=True, methods=['get'])
     def stops(self, request, pk=None):

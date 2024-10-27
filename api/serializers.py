@@ -20,14 +20,17 @@ class StopSerializer(serializers.ModelSerializer):
         return instance
 
 class TripSerializer(serializers.ModelSerializer):
-    stops = StopSerializer(many=True)
+    stops = StopSerializer(many=True, required=False)
 
     class Meta:
         model = Trip
         fields = ['id', 'user', 'name', 'description', 'start_location', 'end_location', 'created_at', 'stops']
+        extra_kwargs = {
+            'user': {'read_only': True},
+        }
 
     def create(self, validated_data):
-        stops_data = validated_data.pop('stops')
+        stops_data = validated_data.pop('stops', [])
         trip = Trip.objects.create(**validated_data)
         for stop_data in stops_data:
             Stop.objects.create(trip=trip, **stop_data)

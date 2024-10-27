@@ -3,5 +3,6 @@ from .views import home
 
 urlpatterns = [
     path('', home, name='home'),  # Route for the homepage
-    path('<path:path>/', home, name='catch_all'),
+    path('trips', home, name='trips'),
+    # path('<path:path>/', home, name='catch_all'),
 ]

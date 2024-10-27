@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'awty_app',
     'rest_framework',
     'corsheaders',
+    'api' if DEBUG else None,
 ]
 
 MIDDLEWARE = [
