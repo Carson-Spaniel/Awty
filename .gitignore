@@ -1,6 +1,7 @@
 # python cache
 *.cpy
 */.cpy
+*.cpython-312.pyc
 
 # virtual environment
 env/
