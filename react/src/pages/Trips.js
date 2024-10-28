@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import TripForm from '../components/TripForm'; // Import the TripForm component
+import 'bootstrap/dist/css/bootstrap.min.css'; // Ensure Bootstrap CSS is imported
+import { Dropdown, Button } from 'react-bootstrap'; // Import necessary Bootstrap components
 
 // Fix Leaflet icon issue in React
 delete L.Icon.Default.prototype._getIconUrl;
@@ -14,21 +16,49 @@ L.Icon.Default.mergeOptions({
 });
 
 function Trips() {
-  const [marker, setMarker] = useState(null); // Store a single marker
-  const [popupInfo, setPopupInfo] = useState(null); // Store popup info
-  const [showForm, setShowForm] = useState(false); // State to control modal visibility
-  const [initialLocation, setInitialLocation] = useState(null); // Store initial location for TripForm
+  const [marker, setMarker] = useState(null);
+  const [popupInfo, setPopupInfo] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+  const [initialLocation, setInitialLocation] = useState(null);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [trips, setTrips] = useState([]); // State to hold trips
+  const [loading, setLoading] = useState(true); // State for loading status
+  const [sortBy, setSortBy] = useState('name'); // Default sort by name
+  const [sortOrder, setSortOrder] = useState('asc'); // Default sort order
+
+  // Fetch trips from the API
+  const fetchTrips = async () => {
+    try {
+      const response = await fetch('/api/trips', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`, // Use your auth token
+        },
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch trips');
+      }
+      const data = await response.json();
+      setTrips(data);
+    } catch (error) {
+      console.error('Error fetching trips:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch trips when the component mounts
+  useEffect(() => {
+    fetchTrips();
+  }, []);
 
   // Function to handle adding a marker to the map
   function AddMarkerOnClick() {
     useMapEvents({
       click(e) {
         const { lat, lng } = e.latlng;
-
-        // Update the state with the new marker and show the popup
         setMarker({ lat, lng });
         setPopupInfo({ lat, lng });
-        setInitialLocation(`${lat}, ${lng}`); // Set initial location for TripForm
+        setInitialLocation(`${lat}, ${lng}`);
       },
     });
     return null;
@@ -36,7 +66,6 @@ function Trips() {
 
   // Handler for creating a trip
   const handleCreateTrip = () => {
-    // Open the TripForm modal
     setShowForm(true);
   };
 
@@ -48,7 +77,31 @@ function Trips() {
   // Callback function to handle successful trip submission
   const handleTripSubmit = (tripData) => {
     console.log('New trip created:', tripData);
-    // Here you might want to update the trips list or handle it further
+    setSuccessMessage('Trip created successfully!');
+    
+    // Refresh trips after creating a new trip
+    fetchTrips();
+
+    // Clear the success message after some time
+    setTimeout(() => {
+      setSuccessMessage('');
+    }, 3000);
+  };
+
+  // Sort trips based on the selected criteria and order
+  const sortedTrips = [...trips].sort((a, b) => {
+    let comparison = 0;
+    if (sortBy === 'name') {
+      comparison = a.name.localeCompare(b.name);
+    } else if (sortBy === 'created_at') {
+      comparison = new Date(a.created_at) - new Date(b.created_at);
+    }
+    return sortOrder === 'asc' ? comparison : -comparison;
+  });
+
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
   return (
@@ -59,21 +112,69 @@ function Trips() {
         <Link className="btn btn-primary btn-lg" to="/trips">View Trips</Link>
       </div>
 
+      {successMessage && <div className="alert alert-success">{successMessage}</div>}
+
+      {/* Sort Selection */}
+      <div className="mb-4 d-flex justify-content-between align-items-center">
+        <div>
+          <Dropdown>
+            <Dropdown.Toggle variant="secondary" id="dropdown-basic">
+              Sort by: {sortBy === 'name' ? 'Name' : 'Creation Date'}
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu>
+              <Dropdown.Item onClick={() => setSortBy('name')}>Name</Dropdown.Item>
+              <Dropdown.Item onClick={() => setSortBy('created_at')}>Creation Date</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
+        <Button 
+          variant="secondary" 
+          onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+        >
+          Sort {sortOrder === 'asc' ? 'Descending' : 'Ascending'}
+        </Button>
+      </div>
+
+      <Button variant="primary" onClick={fetchTrips} className="mb-3">
+        Refresh Trips
+      </Button>
+
+      {loading ? (
+        <p>Loading trips...</p>
+      ) : trips.length === 0 ? (
+        <div className="alert alert-info">No trips available. Please create a new trip!</div>
+      ) : (
+        <div className="row">
+          {sortedTrips.map((trip) => (
+            <div className="col-md-4 mb-3" key={trip.id}>
+              <div className="card" onClick={() => {/* Handle row click for trip details */}}>
+                <div className="card-body">
+                  <h5 className="card-title">{trip.name}</h5>
+                  <p className="card-text">Created on: {formatDate(trip.created_at)}</p>
+                  <p className="card-text"><small className="text-muted">Trip ID: {trip.id}</small></p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       <div className="mt-4">
         <h2>Map</h2>
         <div className="map-container mb-4" style={{ position: 'relative', borderRadius: '5px' }}>
           <MapContainer
-            center={[39.8283, -98.5795]} // Centered on the United States
+            center={[39.8283, -98.5795]}
             zoom={4}
             style={{ height: "500px", width: "100%", borderRadius: '5px' }}
-            className="shadow-lg" // Bootstrap shadow for depth
+            className="shadow-lg"
           >
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             />
             <AddMarkerOnClick />
-            {marker && ( // Check if a marker exists
+            {marker && (
               <Marker position={[marker.lat, marker.lng]}>
                 <Popup onClose={() => setPopupInfo(null)}>
                   <div className="p-2">
@@ -92,7 +193,7 @@ function Trips() {
         </div>
       </div>
 
-      {showForm && ( // Conditionally render the TripForm
+      {showForm && (
         <TripForm
           onClose={handleCloseForm} 
           onSubmit={handleTripSubmit}

@@ -1,7 +1,10 @@
+// src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Home from './pages/Home';
 import Trips from './pages/Trips';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
 
 function App() {
   return (
@@ -30,6 +33,12 @@ function App() {
                 <li className="nav-item">
                   <Link className="nav-link" to="/trips">Trips</Link>
                 </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/login">Login</Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/signup">Sign Up</Link>
+                </li>
                 {/* Add more links here as needed */}
               </ul>
             </div>
@@ -40,6 +49,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/trips" element={<Trips />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           {/* Add more routes here as needed */}
         </Routes>
       </div>

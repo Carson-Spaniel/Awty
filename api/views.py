@@ -11,6 +11,10 @@ class TripViewSet(viewsets.ModelViewSet):
     serializer_class = TripSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        """Return trips for the logged-in user."""
+        return Trip.objects.filter(user=self.request.user)
+
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 

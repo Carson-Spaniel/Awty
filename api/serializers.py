@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.contrib.auth.models import User
 from .models import Trip, Stop, Route
 
 class StopSerializer(serializers.ModelSerializer):
@@ -70,3 +71,18 @@ class RouteSerializer(serializers.ModelSerializer):
         instance.route_data = validated_data.get('route_data', instance.route_data)
         instance.save()
         return instance
+
+class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'password']
+
+    def create(self, validated_data):
+        user = User(
+            username=validated_data['username']
+        )
+        user.set_password(validated_data['password'])
+        user.save()
+        return user

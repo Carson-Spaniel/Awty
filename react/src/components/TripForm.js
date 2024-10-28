@@ -34,12 +34,14 @@ const TripForm = ({ onClose, onSubmit, initialLocation }) => {
 
     console.log('Trip data being submitted:', tripData);
 
+    const token = localStorage.getItem('token');
+    
     try {
       const response = await fetch('/api/trips/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRFToken': getCookie('csrftoken'), // Add CSRF token here
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify(tripData),
       });

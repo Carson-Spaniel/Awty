@@ -1,4 +1,13 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def home(request, path=''):
+    return render(request, 'index.html')
+
+@login_required
+def trips(request, path=''):
+    return render(request, 'index.html')
+
+def login(request, path=''):
     return render(request, 'index.html')
