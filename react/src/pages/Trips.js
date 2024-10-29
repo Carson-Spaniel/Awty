@@ -141,7 +141,7 @@ function Trips() {
       {loading ? (
         <p>Loading trips...</p>
       ) : trips.length === 0 ? (
-        <div className="alert alert-info">No trips available. Please create a new trip!</div>
+        <div className="alert alert-info">No trips available. Click on the map and create a new trip!</div>
       ) : (
         <div className="row">
           {sortedTrips.map((trip) => (
