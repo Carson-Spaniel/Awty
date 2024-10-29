@@ -23,8 +23,8 @@ function Trips() {
   const [successMessage, setSuccessMessage] = useState('');
   const [trips, setTrips] = useState([]); // State to hold trips
   const [loading, setLoading] = useState(true); // State for loading status
-  const [sortBy, setSortBy] = useState('name'); // Default sort by name
-  const [sortOrder, setSortOrder] = useState('asc'); // Default sort order
+  const [sortBy, setSortBy] = useState('created_at'); // Default sort by creation time
+  const [sortOrder, setSortOrder] = useState('desc'); // Default sort order
 
   // Fetch trips from the API
   const fetchTrips = async () => {
@@ -109,7 +109,6 @@ function Trips() {
       <div className="jumbotron text-center">
         <h1 className="display-4">Trips</h1>
         <p className="lead">Plan and manage your trips with ease!</p>
-        <Link className="btn btn-primary btn-lg" to="/trips">View Trips</Link>
       </div>
 
       {successMessage && <div className="alert alert-success">{successMessage}</div>}
@@ -147,15 +146,19 @@ function Trips() {
       ) : (
         <div className="row">
           {sortedTrips.map((trip) => (
-            <div className="col-md-4 mb-3" key={trip.id}>
-              <div className="card" onClick={() => {/* Handle row click for trip details */}}>
+            <Link
+              to={`/trips/${trip.id}`}
+              className="text-decoration-none text-reset"
+              key={trip.id}
+            >
+              <div className="card mb-3 shadow-sm hover-shadow">
                 <div className="card-body">
                   <h5 className="card-title">{trip.name}</h5>
                   <p className="card-text">Created on: {formatDate(trip.created_at)}</p>
                   <p className="card-text"><small className="text-muted">Trip ID: {trip.id}</small></p>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}
