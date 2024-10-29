@@ -8,7 +8,6 @@ class StopSerializer(serializers.ModelSerializer):
         fields = ['id', 'trip', 'location', 'description', 'order']
 
     def create(self, validated_data):
-        # Automatically set the trip field if not provided
         trip = validated_data.pop('trip', None)
         stop = Stop.objects.create(**validated_data)
         return stop
@@ -25,14 +24,23 @@ class TripSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Trip
-        fields = ['id', 'user', 'name', 'description', 'start_location', 'end_location', 'created_at', 'stops']
+        fields = ['id', 'user', 'name', 'description', 'start_location', 'start_location_lat', 'start_location_long', 'end_location', 'created_at', 'stops']
         extra_kwargs = {
             'user': {'read_only': True},
         }
 
     def create(self, validated_data):
         stops_data = validated_data.pop('stops', [])
+
+        # Split start_location into lat and long
+        start_location = validated_data.get('start_location')
+        if start_location:
+            lat, long = map(str.strip, start_location.split(','))
+            validated_data['start_location_lat'] = lat
+            validated_data['start_location_long'] = long
+
         trip = Trip.objects.create(**validated_data)
+        
         for stop_data in stops_data:
             Stop.objects.create(trip=trip, **stop_data)
         return trip
@@ -40,7 +48,13 @@ class TripSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
         instance.description = validated_data.get('description', instance.description)
-        instance.start_location = validated_data.get('start_location', instance.start_location)
+        
+        # Update start_location and derive lat/long
+        start_location = validated_data.get('start_location')
+        if start_location:
+            lat, long = map(str.strip, start_location.split(','))
+            instance.start_location_lat = lat
+            instance.start_location_long = long
         instance.end_location = validated_data.get('end_location', instance.end_location)
         instance.save()
 

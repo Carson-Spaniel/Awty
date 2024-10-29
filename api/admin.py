@@ -1,7 +1,6 @@
 from django.contrib import admin
-from .models import *
+from .models import Trip, Stop, Route
 
-# Register your models here.
-admin.register(Trip)
-admin.register(Stop)
-admin.register(Route)
+admin.site.register(Trip)
+admin.site.register(Stop)
+admin.site.register(Route)

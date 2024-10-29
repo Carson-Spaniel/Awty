@@ -4,7 +4,6 @@ import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaf
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import TripForm from '../components/TripForm'; // Import the TripForm component
-import 'bootstrap/dist/css/bootstrap.min.css'; // Ensure Bootstrap CSS is imported
 import { Dropdown, Button } from 'react-bootstrap'; // Import necessary Bootstrap components
 
 // Fix Leaflet icon issue in React
@@ -181,9 +180,9 @@ function Trips() {
               <Marker position={[marker.lat, marker.lng]}>
                 <Popup onClose={() => setPopupInfo(null)}>
                   <div className="p-2">
-                    <h5 className="font-weight-bold">Marker Coordinates</h5>
-                    <p>Latitude: {marker.lat}</p>
-                    <p>Longitude: {marker.lng}</p>
+                    {/* <h5 className="font-weight-bold">Marker Coordinates</h5> */}
+                    {/* <p>Latitude: {marker.lat}</p>
+                    <p>Longitude: {marker.lng}</p> */}
                     <div className="d-flex justify-content-between">
                       <button className="btn btn-success" onClick={handleCreateTrip}>Create Trip</button>
                       <button className="btn btn-secondary" onClick={() => {/* Your add to trip logic */}}>Add to Trip</button>

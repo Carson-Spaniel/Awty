@@ -6,7 +6,7 @@ def home(request, path=''):
     return render(request, 'index.html')
 
 @login_required
-def trips(request, path=''):
+def trips(request, trip_id=''):
     return render(request, 'index.html')
 
 def login(request, path=''):

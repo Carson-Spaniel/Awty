@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Trips from './pages/Trips';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import Trip from './components/Trip';
 
 function App() {
   return (
@@ -51,6 +52,7 @@ function App() {
           <Route path="/trips" element={<Trips />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/trips/:trip_id" element={<Trip />} />
           {/* Add more routes here as needed */}
         </Routes>
       </div>

@@ -5,6 +5,8 @@ class Trip(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     description = models.TextField()
+    start_location_lat = models.FloatField(max_length=255, blank=True,)
+    start_location_long = models.FloatField(max_length=255, blank=True,)
     start_location = models.CharField(max_length=255)
     end_location = models.CharField(max_length=255, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
