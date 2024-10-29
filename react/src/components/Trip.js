@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import '../css/Trip.css';
 
 // Fix Leaflet icon issue in React
 delete L.Icon.Default.prototype._getIconUrl;
@@ -74,6 +75,8 @@ function Trip() {
 
   return (
     <div className="container mt-5">
+      <Link to="/trips" className="back-button btn btn-sm btn-primary">Back</Link> {/* Back Button */}
+  
       <div className="jumbotron text-center">
         <h1 className="display-4">{tripData ? tripData.name : 'Loading...'}</h1>
         <p className="lead">{tripData ? tripData.description : 'Loading description...'}</p>

@@ -1,0 +1,9 @@
+.back-button {
+    position: relative;
+    top: -10px;
+    left: 20px;
+    z-index: 1000; /* Ensure it stays above other elements */
+    font-size: 0.85rem;
+    padding: 4px 10px;
+}
+  
