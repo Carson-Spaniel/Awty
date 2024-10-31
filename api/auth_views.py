@@ -5,7 +5,7 @@ from rest_framework.decorators import action
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import AllowAny
-from .serializers import UserSerializer  # Define this serializer as shown below
+from .serializers import UserSerializer
 
 class UserViewSet(viewsets.ViewSet):
     permission_classes = [AllowAny]
